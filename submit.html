@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>お店を登録する｜スクール生のお店マップ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Old+Mincho:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="page">
+    <a class="back" href="index.html">← 地図にもどる</a>
+    <h1>お店を登録する</h1>
+    <p class="lead">スクール生のお店や、仲間に紹介したい関連スポットを登録できます。送っていただいた内容は確認後に地図へ載ります。</p>
+    <div id="msg"></div>
+
+    <form id="form" novalidate>
+      <div class="field">
+        <label for="name">お店の名前<span class="req">必須</span></label>
+        <input id="name" name="name" maxlength="80" required>
+      </div>
+      <div class="field">
+        <label for="category">カテゴリ<span class="req">必須</span></label>
+        <select id="category" name="category" required></select>
+      </div>
+      <div class="field">
+        <label for="address">住所<span class="req">必須</span></label>
+        <input id="address" name="address" required placeholder="例：東京都渋谷区神宮前1-2-3">
+        <button class="btn sub" type="button" id="geoBtn">住所から地図の位置を探す</button>
+        <div id="pickMap" class="pick-map"></div>
+        <div class="hint" id="pickHint">地図をタップすると、ピンの位置を直せます。</div>
+      </div>
+      <div class="field">
+        <label for="hours">営業時間</label>
+        <input id="hours" name="hours" placeholder="例：10:00〜17:00（火曜定休）">
+      </div>
+      <div class="field">
+        <label for="message">スクール生へのメッセージ・特典</label>
+        <textarea id="message" name="message" maxlength="400" placeholder="例：「マップを見た」でドリンク1杯サービス"></textarea>
+      </div>
+      <div class="field">
+        <label for="photo">写真</label>
+        <input id="photo" name="photo" type="file" accept="image/*">
+        <img id="photoPreview" class="photo-preview" alt="">
+      </div>
+      <div class="field">
+        <label for="website">WebサイトのURL</label>
+        <input id="website" name="website" type="url" placeholder="https://">
+      </div>
+      <div class="field">
+        <label for="instagram">Instagram</label>
+        <input id="instagram" name="instagram" placeholder="@アカウント名 または URL">
+      </div>
+      <div class="field">
+        <label for="owner_name">運営しているスクール生のお名前</label>
+        <input id="owner_name" name="owner_name">
+        <div class="hint">地図の詳細に「◯◯さんのお店」と表示されます。載せたくない場合は空欄で大丈夫です。</div>
+      </div>
+      <div class="field">
+        <label for="contact_email">ご連絡先メールアドレス<span class="req">必須</span></label>
+        <input id="contact_email" name="contact_email" type="email" required>
+        <div class="hint">内容の確認でご連絡する時だけ使います。地図には表示されません。</div>
+      </div>
+      <input class="hp" name="website2" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn" type="submit" id="submitBtn">この内容で送る</button>
+    </form>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/submit.js"></script>
+</body>
+</html>

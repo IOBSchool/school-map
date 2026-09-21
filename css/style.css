@@ -8,6 +8,18 @@
   --line: #e7e1d3;
   --shadow: 0 4px 18px rgba(85, 55, 39, .16);
   --safe-b: env(safe-area-inset-bottom, 0px);
+  /* テーマで差し替える変数 */
+  --accent: var(--orange);
+  --header-bg: linear-gradient(var(--bg) 70%, rgba(249, 247, 239, 0));
+  --header-fg: var(--brown);
+  --add-bg: var(--orange);
+  --add-fg: #fff;
+  --chip-on: var(--brown);
+  --perk-bg: #fff3ec;
+  --perk-line: var(--orange);
+  --locate-fg: var(--blue);
+  --tile-filter: none;
+  --title-font: 'Zen Old Mincho', serif;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
@@ -16,7 +28,7 @@ body {
   color: var(--brown); background: var(--bg);
   -webkit-text-size-adjust: 100%;
 }
-h1, h2, .title { font-family: 'Zen Old Mincho', serif; }
+h1, h2, .title { font-family: var(--title-font); }
 a { color: var(--blue); }
 button { font: inherit; cursor: pointer; }
 
@@ -35,7 +47,7 @@ button { font: inherit; cursor: pointer; }
 .gate-err { color: #c0392b; font-size: 13px; min-height: 20px; margin-top: 8px; }
 .btn {
   display: inline-block; width: 100%; margin-top: 12px; padding: 14px; border: 0;
-  border-radius: 12px; background: var(--orange); color: #fff; font-weight: 700; font-size: 16px;
+  border-radius: 12px; background: var(--accent); color: #fff; font-weight: 700; font-size: 16px;
   text-decoration: none; text-align: center;
 }
 .btn.sub { background: #fff; color: var(--brown); border: 1px solid var(--line); }
@@ -46,12 +58,12 @@ button { font: inherit; cursor: pointer; }
 .topbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 500;
   padding: max(10px, env(safe-area-inset-top)) 12px 8px;
-  background: linear-gradient(var(--bg) 70%, rgba(249, 247, 239, 0));
+  background: var(--header-bg); color: var(--header-fg);
 }
 .topbar-row { display: flex; align-items: center; gap: 8px; }
 .topbar h1 { font-size: 18px; margin: 0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .add-link {
-  flex-shrink: 0; font-size: 13px; font-weight: 700; color: #fff; background: var(--orange);
+  flex-shrink: 0; font-size: 13px; font-weight: 700; color: var(--add-fg); background: var(--add-bg);
   padding: 8px 12px; border-radius: 999px; text-decoration: none;
 }
 .chips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0 4px; scrollbar-width: none; }
@@ -60,13 +72,14 @@ button { font: inherit; cursor: pointer; }
   flex-shrink: 0; padding: 7px 12px; border-radius: 999px; font-size: 13px;
   border: 1px solid var(--line); background: #fff; color: var(--brown); white-space: nowrap;
 }
-.chip.on { background: var(--brown); color: #fff; border-color: var(--brown); }
-.count { font-size: 12px; color: var(--brown-sub); }
+.chip.on { background: var(--chip-on); color: #fff; border-color: var(--chip-on); }
+.count { font-size: 12px; color: inherit; opacity: .75; }
+.leaflet-tile-pane { filter: var(--tile-filter); }
 
 .locate {
   position: fixed; right: 14px; bottom: calc(24px + var(--safe-b)); z-index: 500;
   display: flex; align-items: center; gap: 6px; padding: 12px 16px; border: 0;
-  border-radius: 999px; background: #fff; color: var(--blue); font-weight: 700; font-size: 14px;
+  border-radius: 999px; background: #fff; color: var(--locate-fg); font-weight: 700; font-size: 14px;
   box-shadow: var(--shadow);
 }
 .locate.busy { opacity: .6; }
@@ -83,7 +96,7 @@ button { font: inherit; cursor: pointer; }
   border: 3px solid #fff; box-shadow: 0 0 0 6px rgba(0, 133, 201, .25);
 }
 .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
-  background: var(--orange) !important; color: #fff; font-weight: 700;
+  background: var(--accent) !important; color: #fff; font-weight: 700;
 }
 .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
   background: rgba(242, 107, 59, .3) !important;
@@ -115,10 +128,10 @@ button { font: inherit; cursor: pointer; }
 .sheet h2 { font-size: 21px; margin: 8px 0 2px; line-height: 1.4; }
 .sheet .owner { font-size: 13px; color: var(--brown-sub); margin: 0 0 10px; }
 .perk {
-  background: #fff3ec; border-left: 4px solid var(--orange); border-radius: 8px;
+  background: var(--perk-bg); border-left: 4px solid var(--perk-line); border-radius: 8px;
   padding: 10px 12px; font-size: 14px; line-height: 1.7; margin: 12px 0; white-space: pre-wrap;
 }
-.perk b { display: block; font-size: 12px; color: var(--orange); }
+.perk b { display: block; font-size: 12px; color: var(--perk-line); }
 .info { list-style: none; padding: 0; margin: 12px 0; font-size: 14px; line-height: 1.6; }
 .info li { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .info li span:first-child { flex-shrink: 0; width: 1.4em; text-align: center; }
@@ -127,7 +140,7 @@ button { font: inherit; cursor: pointer; }
   flex: 1 1 30%; text-align: center; padding: 11px 8px; border-radius: 10px; font-size: 13px;
   font-weight: 700; text-decoration: none; border: 1px solid var(--line); color: var(--brown); background: #fff;
 }
-.links a.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+.links a.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 /* ---------- フォーム・管理画面共通 ---------- */
 .page { max-width: 640px; margin: 0 auto; padding: 20px 16px 60px; }
@@ -162,6 +175,6 @@ button { font: inherit; cursor: pointer; }
 .admin-card dd { margin: 0; word-break: break-all; white-space: pre-wrap; }
 .admin-actions { display: flex; gap: 8px; }
 .admin-actions button { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: #fff; color: var(--brown); font-weight: 700; font-size: 14px; }
-.admin-actions .approve { background: var(--orange); color: #fff; border-color: var(--orange); }
+.admin-actions .approve { background: var(--accent); color: #fff; border-color: var(--accent); }
 .admin-actions .danger { color: #a93226; }
 .empty { text-align: center; color: var(--brown-sub); padding: 40px 0; font-size: 14px; }

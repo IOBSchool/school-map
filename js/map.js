@@ -125,7 +125,7 @@
       ${photo ? `<img class="sheet-photo" src="${esc(photo)}" alt="" loading="lazy">` : ''}
       <span class="sheet-cat" style="background:${c.color}">${c.icon} ${esc(c.label)}</span>
       <h2>${esc(s.name)}</h2>
-      ${s.owner_name ? `<div class="people"><b>ここにいるスクール生</b>${esc(s.owner_name)}</div>` : ''}
+      ${People.detailHtml(s)}
       ${s.message ? `<div class="perk"><b>スクール生のみなさんへ</b>${esc(s.message)}</div>` : ''}
       <ul class="info">
         ${s.hours ? `<li><span>🕒</span><span>${esc(s.hours)}</span></li>` : ''}
@@ -146,7 +146,7 @@
   function openList() {
     document.getElementById('sheetBody').innerHTML = `
       <h2 class="list-title">お店の一覧</h2>
-      <input class="list-search" id="listSearch" type="search" placeholder="お店・スクール生の名前・地名で探す">
+      <input class="list-search" id="listSearch" type="search" placeholder="お店・名前・資格・地名で探す">
       <ul class="shop-list" id="shopList"></ul>`;
     renderList('');
     document.getElementById('listSearch').addEventListener('input', (e) => renderList(e.target.value));
@@ -160,14 +160,14 @@
     const list = shops
       .filter((s) => activeCat === 'all' || s.category === activeCat)
       .filter((s) => {
-        const hay = [s.name, s.owner_name, s.address].join(' ').toLowerCase();
+        const hay = [s.name, People.searchText(s), s.address].join(' ').toLowerCase();
         return words.every((w) => hay.includes(w));
       })
       .map((s) => ({ s, d: me ? distKm(me, [s.lat, s.lng]) : null }))
       .sort((a, b) => (a.d != null && b.d != null ? a.d - b.d : 0));
     document.getElementById('shopList').innerHTML = list.length ? list.map(({ s, d }) => {
       const c = CATS[s.category] || CATS.other;
-      const people = (s.owner_name || '').split(/\n+/).map((x) => x.trim()).filter(Boolean).join('・');
+      const people = People.summary(s);
       return `<li><button type="button" data-id="${esc(s.id)}">
         <span class="li-icon" style="background:${c.color}">${c.icon}</span>
         <span class="li-main"><b>${esc(s.name)}</b>

@@ -56,9 +56,9 @@
         <input id="instagram" name="instagram" placeholder="@アカウント名 または URL">
       </div>
       <div class="field">
-        <label for="owner_name">このお店にいるスクール生</label>
-        <textarea id="owner_name" name="owner_name" maxlength="400" placeholder="例：&#10;森 なお（店主）&#10;山田 花子（スタッフ）"></textarea>
-        <div class="hint">1行に1人ずつ、お名前と役割を書いてください。地図の詳細に「ここにいるスクール生」として表示されます。スクール生以外には見えません。</div>
+        <label>このお店にいるスクール生</label>
+        <div class="hint" style="margin:0 0 8px">オーナー・運営者・スタッフなど、何人でも登録できます。地図の詳細に表示されます（スクール生以外には見えません）。</div>
+        <div id="peopleEditor"></div>
       </div>
       <div class="field">
         <label for="contact_email">ご連絡先メールアドレス<span class="req">必須</span></label>
@@ -74,6 +74,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
+  <script src="js/people.js"></script>
   <script src="js/submit.js"></script>
 </body>
 </html>

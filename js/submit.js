@@ -9,6 +9,8 @@
   $('category').innerHTML = '<option value="">選んでください</option>' +
     Object.entries(CATS).map(([k, c]) => `<option value="${k}">${c.icon} ${esc(c.label)}</option>`).join('');
 
+  People.mount($('peopleEditor'), []);
+
   // ---------- 位置指定用の小さな地図 ----------
   const pick = L.map('pickMap').setView(cfg.INITIAL_CENTER, cfg.INITIAL_ZOOM);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -91,17 +93,19 @@
     btn.textContent = '送信中…';
     try {
       const photo_url = photoBlob ? await ShopAPI.uploadPhoto(photoBlob) : null;
+      const people = await People.collect($('peopleEditor'), ShopAPI.uploadPhoto);
       const { lat, lng } = pin.getLatLng();
       await ShopAPI.submitShop({
         name: v('name'), category: v('category'), address: v('address'),
         lat, lng, hours: v('hours') || null, message: v('message') || null,
         website: v('website') || null, instagram: v('instagram') || null,
-        owner_name: v('owner_name') || null, contact_email: v('contact_email'), photo_url,
+        people, contact_email: v('contact_email'), photo_url,
       });
       f.reset();
       photoBlob = null;
       $('photoPreview').style.display = 'none';
       if (pin) { pin.remove(); pin = null; }
+      People.mount($('peopleEditor'), []);
       msg('ok', 'ありがとうございます！受け付けました。<br>内容を確認して、地図に載せたらお知らせします。');
     } catch (err) {
       console.error(err);

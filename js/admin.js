@@ -69,7 +69,7 @@
           ${row('特典', esc(s.message))}
           ${row('Web', safeUrl(s.website) ? `<a href="${esc(s.website)}" target="_blank" rel="noopener">${esc(s.website)}</a>` : '')}
           ${row('Instagram', igUrl(s.instagram) ? `<a href="${esc(igUrl(s.instagram))}" target="_blank" rel="noopener">${esc(s.instagram)}</a>` : '')}
-          ${row('スクール生', esc(s.owner_name))}
+          ${row('スクール生', esc(People.summary(s)))}
           ${row('連絡先', esc(s.contact_email))}
           ${row('受付日', s.created_at ? esc(new Date(s.created_at).toLocaleString('ja-JP')) : '')}
         </dl>
@@ -83,12 +83,20 @@
     const cardEl = b.closest('.admin-card');
     const id = cardEl.dataset.id;
     const act = b.dataset.act;
-    if (act === 'edit') { cardEl.outerHTML = editForm(rowsById[id]); return; }
+    if (act === 'edit') {
+      cardEl.outerHTML = editForm(rowsById[id]);
+      People.mount($('list').querySelector(`.admin-edit[data-id="${CSS.escape(id)}"] .people-editor`), People.fromShop(rowsById[id]));
+      return;
+    }
     if (act === 'cancel') { load(); return; }
     if (act === 'save') {
       const get = (n) => { const v = cardEl.querySelector(`[name="${n}"]`).value.trim(); return v || null; };
       const fields = {};
       EDIT_FIELDS.forEach(([n]) => { fields[n] = get(n); });
+      b.disabled = true;
+      try { fields.people = await People.collect(cardEl.querySelector('.people-editor'), ShopAPI.uploadPhoto); }
+      catch (err) { console.error(err); b.disabled = false; return note('err', '写真を送れませんでした。'); }
+      fields.owner_name = null; // 旧形式は people に移したので空にする
       if (!fields.name || !fields.address || !fields.category) return note('err', 'お店の名前・カテゴリ・住所は空にできません。');
       if (fields.website && !safeUrl(fields.website)) return note('err', 'WebサイトのURLは https:// から書いてください。');
       b.disabled = true;
@@ -119,7 +127,7 @@
 
   // 編集できる項目（位置の緯度経度は住所の変更では動かない点に注意）
   const EDIT_FIELDS = [
-    ['name', 'お店の名前'], ['category', 'カテゴリ'], ['owner_name', 'このお店にいるスクール生（1行に1人）', 'area'],
+    ['name', 'お店の名前'], ['category', 'カテゴリ'],
     ['message', 'スクール生へのメッセージ・特典', 'area'], ['hours', '営業時間'], ['address', '住所'],
     ['website', 'WebサイトのURL'], ['instagram', 'Instagram'], ['contact_email', '連絡先メール（地図には出ない）'],
   ];
@@ -141,6 +149,7 @@
       <article class="admin-card admin-edit" data-id="${esc(s.id)}">
         <h3>編集：${esc(s.name)}</h3>
         ${EDIT_FIELDS.map(input).join('')}
+        <div class="field"><label>このお店にいるスクール生</label><div class="people-editor"></div></div>
         <div class="admin-actions">
           <button class="approve" data-act="save">保存</button><button data-act="cancel">やめる</button>
         </div>

@@ -10,7 +10,11 @@
       photo_url: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800',
       hours: '10:00〜17:00（火曜定休）', address: '東京都渋谷区（サンプル住所）', lat: 35.664, lng: 139.698,
       message: 'スクール生の方はドリンク1杯サービス！「マップを見た」とお声がけください。',
-      website: 'https://example.com', instagram: 'example', owner_name: 'サンプル 花子' },
+      website: 'https://example.com', instagram: 'example', owner_name: '',
+      people: [
+        { name: 'サンプル 花子', role: 'オーナー', certs: ['オーガニック専門家資格'], courses: ['オーガニック専門家コース', 'オーガニック教養コース'], note: '2024年修了' },
+        { name: 'サンプル 一郎', role: 'スタッフ', certs: [], courses: ['オーガニックライフスタイルコース'], note: '' },
+      ] },
     { id: 'd2', status: 'approved', name: 'サンプル：自然栽培の畑 みどり農園', category: 'farm',
       photo_url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800',
       hours: '土日 9:00〜12:00（収穫体験は要予約）', address: '長野県（サンプル住所）', lat: 36.65, lng: 138.18,

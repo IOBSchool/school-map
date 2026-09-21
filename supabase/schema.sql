@@ -133,3 +133,13 @@ on conflict (key) do update set value = excluded.value;
 insert into public.shopmap_admins (email)
 values ('organiclifeingermany@gmail.com')
 on conflict do nothing;
+
+-- =====================================================================
+-- 追加（2026-09-21）：お店にいるスクール生（名前・役割・受講講座・認定資格・顔写真）
+-- people = [{ name, role, courses: [], certs: [], note, photo_url }]
+-- 閲覧関数 shopmap_get_shops は people も返すように作り直した（戻り値が変わるため drop → create）
+-- =====================================================================
+alter table public.shopmap_shops add column if not exists people jsonb not null default '[]'::jsonb;
+alter table public.shopmap_shops drop constraint if exists shopmap_people_is_array;
+alter table public.shopmap_shops add constraint shopmap_people_is_array check (jsonb_typeof(people) = 'array');
+-- shopmap_get_shops の returns table 末尾に people jsonb を追加し、select にも s.people を追加して再作成すること

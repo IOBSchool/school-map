@@ -78,6 +78,11 @@
     const { error } = await sb.from('shopmap_shops').update({ status, approved_at }).eq('id', id);
     if (error) throw error;
   }
+  async function adminUpdate(id, fields) {
+    if (DEMO) { Object.assign(demoShops.find((s) => s.id === id), fields); return; }
+    const { error } = await sb.from('shopmap_shops').update(fields).eq('id', id);
+    if (error) throw error;
+  }
   async function adminDelete(id) {
     if (DEMO) { demoShops.splice(demoShops.findIndex((s) => s.id === id), 1); return; }
     const { error } = await sb.from('shopmap_shops').delete().eq('id', id);
@@ -86,7 +91,7 @@
 
   window.ShopAPI = {
     DEMO, getApprovedShops, uploadPhoto, submitShop,
-    adminSignIn, adminCurrentUser, adminSignOut, adminListShops, adminSetStatus, adminDelete,
+    adminSignIn, adminCurrentUser, adminSignOut, adminListShops, adminSetStatus, adminUpdate, adminDelete,
   };
 })();
 

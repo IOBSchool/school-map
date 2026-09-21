@@ -62,6 +62,10 @@ button { font: inherit; cursor: pointer; }
 }
 .topbar-row { display: flex; align-items: center; gap: 8px; }
 .topbar h1 { font-size: 18px; margin: 0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-link {
+  flex-shrink: 0; font-size: 13px; font-weight: 700; color: var(--header-fg); background: transparent;
+  padding: 7px 11px; border-radius: 999px; border: 1.5px solid currentColor;
+}
 .add-link {
   flex-shrink: 0; font-size: 13px; font-weight: 700; color: var(--add-fg); background: var(--add-bg);
   padding: 8px 12px; border-radius: 999px; text-decoration: none;
@@ -127,6 +131,27 @@ button { font: inherit; cursor: pointer; }
 .sheet-cat { display: inline-block; margin-top: 12px; font-size: 12px; font-weight: 700; color: #fff; padding: 3px 10px; border-radius: 999px; }
 .sheet h2 { font-size: 21px; margin: 8px 0 2px; line-height: 1.4; }
 .sheet .owner { font-size: 13px; color: var(--brown-sub); margin: 0 0 10px; }
+.people {
+  background: var(--bg); border-radius: 8px; padding: 10px 12px; margin: 12px 0;
+  font-size: 14px; line-height: 1.8; white-space: pre-wrap;
+}
+.people b { display: block; font-size: 12px; color: var(--brown-sub); }
+.list-title { font-size: 19px; margin: 4px 0 10px; }
+.list-search {
+  width: 100%; padding: 11px 12px; font-size: 16px; border: 1px solid var(--line);
+  border-radius: 10px; background: #fff; color: var(--brown); margin-bottom: 6px;
+}
+.shop-list { list-style: none; padding: 0; margin: 0; }
+.shop-list button {
+  display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left;
+  padding: 12px 2px; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--brown);
+}
+.li-icon { flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.li-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.li-main b { font-size: 15px; }
+.li-main small { font-size: 12px; color: var(--brown-sub); }
+.li-main .li-people { color: var(--brown); }
+.li-empty { padding: 20px 0; text-align: center; color: var(--brown-sub); font-size: 14px; }
 .perk {
   background: var(--perk-bg); border-left: 4px solid var(--perk-line); border-radius: 8px;
   padding: 10px 12px; font-size: 14px; line-height: 1.7; margin: 12px 0; white-space: pre-wrap;
@@ -177,4 +202,7 @@ button { font: inherit; cursor: pointer; }
 .admin-actions button { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: #fff; color: var(--brown); font-weight: 700; font-size: 14px; }
 .admin-actions .approve { background: var(--accent); color: #fff; border-color: var(--accent); }
 .admin-actions .danger { color: #a93226; }
+.admin-edit .field { margin-bottom: 12px; }
+.admin-edit .field label { font-size: 12px; }
+.admin-edit .field input, .admin-edit .field textarea, .admin-edit .field select { font-size: 15px; padding: 9px; }
 .empty { text-align: center; color: var(--brown-sub); padding: 40px 0; font-size: 14px; }

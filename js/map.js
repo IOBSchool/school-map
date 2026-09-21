@@ -125,7 +125,7 @@
       ${photo ? `<img class="sheet-photo" src="${esc(photo)}" alt="" loading="lazy">` : ''}
       <span class="sheet-cat" style="background:${c.color}">${c.icon} ${esc(c.label)}</span>
       <h2>${esc(s.name)}</h2>
-      ${s.owner_name ? `<p class="owner">スクール生 ${esc(s.owner_name)} さんのお店</p>` : ''}
+      ${s.owner_name ? `<div class="people"><b>ここにいるスクール生</b>${esc(s.owner_name)}</div>` : ''}
       ${s.message ? `<div class="perk"><b>スクール生のみなさんへ</b>${esc(s.message)}</div>` : ''}
       <ul class="info">
         ${s.hours ? `<li><span>🕒</span><span>${esc(s.hours)}</span></li>` : ''}
@@ -142,6 +142,50 @@
     sheet.setAttribute('aria-hidden', 'false');
     map.panTo([s.lat, s.lng], { animate: true });
   }
+  // ---------- 一覧（お店の名前・スクール生の名前・地名で探す） ----------
+  function openList() {
+    document.getElementById('sheetBody').innerHTML = `
+      <h2 class="list-title">お店の一覧</h2>
+      <input class="list-search" id="listSearch" type="search" placeholder="お店・スクール生の名前・地名で探す">
+      <ul class="shop-list" id="shopList"></ul>`;
+    renderList('');
+    document.getElementById('listSearch').addEventListener('input', (e) => renderList(e.target.value));
+    document.querySelector('.sheet-body').scrollTop = 0;
+    sheet.classList.add('open');
+    backdrop.classList.add('open');
+    sheet.setAttribute('aria-hidden', 'false');
+  }
+  function renderList(q) {
+    const words = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const list = shops
+      .filter((s) => activeCat === 'all' || s.category === activeCat)
+      .filter((s) => {
+        const hay = [s.name, s.owner_name, s.address].join(' ').toLowerCase();
+        return words.every((w) => hay.includes(w));
+      })
+      .map((s) => ({ s, d: me ? distKm(me, [s.lat, s.lng]) : null }))
+      .sort((a, b) => (a.d != null && b.d != null ? a.d - b.d : 0));
+    document.getElementById('shopList').innerHTML = list.length ? list.map(({ s, d }) => {
+      const c = CATS[s.category] || CATS.other;
+      const people = (s.owner_name || '').split(/\n+/).map((x) => x.trim()).filter(Boolean).join('・');
+      return `<li><button type="button" data-id="${esc(s.id)}">
+        <span class="li-icon" style="background:${c.color}">${c.icon}</span>
+        <span class="li-main"><b>${esc(s.name)}</b>
+          ${people ? `<small class="li-people">👤 ${esc(people)}</small>` : ''}
+          <small>${esc(s.address)}${d != null ? `・約${d < 10 ? d.toFixed(1) : Math.round(d)}km` : ''}</small></span>
+      </button></li>`;
+    }).join('') : '<li class="li-empty">見つかりませんでした</li>';
+  }
+  document.getElementById('listBtn').addEventListener('click', openList);
+  document.getElementById('sheetBody').addEventListener('click', (e) => {
+    const b = e.target.closest('.shop-list button[data-id]');
+    if (!b) return;
+    const s = shops.find((x) => String(x.id) === b.dataset.id);
+    if (!s) return;
+    map.setView([s.lat, s.lng], Math.max(map.getZoom(), 14));
+    openSheet(s);
+  });
+
   function closeSheet() {
     sheet.classList.remove('open');
     backdrop.classList.remove('open');

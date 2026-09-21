@@ -116,7 +116,9 @@
     const c = CATS[s.category] || CATS.other;
     const dist = me ? distKm(me, [s.lat, s.lng]) : null;
     const web = safeUrl(s.website), ig = igUrl(s.instagram);
-    const route = `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}`;
+    // 道案内は住所で（ピンは町名レベルの精度のことがあるため）。括弧内の補足は外す
+    const dest = (s.address || '').replace(/（[^）]*）|\([^)]*\)/g, '').trim() || `${s.lat},${s.lng}`;
+    const route = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
     const photo = safeUrl(s.photo_url) || (s.photo_url && s.photo_url.startsWith('blob:') ? s.photo_url : '');
 
     document.getElementById('sheetBody').innerHTML = `

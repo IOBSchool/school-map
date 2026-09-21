@@ -1,8 +1,8 @@
 // ===== 設定ファイル =====
 // SUPABASE_URL を空のままにすると「デモモード」（サンプルデータで動作確認できる）
 window.SHOPMAP_CONFIG = {
-  SUPABASE_URL: '',
-  SUPABASE_ANON_KEY: '',
+  SUPABASE_URL: 'https://kctwhkxnvfidsnqaoefh.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_6vtlwnwq3Mi0t6XdGxQN7g_0VFm5PTU',
   PHOTO_BUCKET: 'shopmap-photos',
 
   // デモモードの閲覧パスワード

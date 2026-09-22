@@ -35,13 +35,11 @@
       created_at: new Date().toISOString() },
   ];
 
-  async function getApprovedShops(password) {
-    if (DEMO) {
-      if (password !== cfg.DEMO_PASSWORD) throw new Error('invalid_password');
-      return demoShops.filter((s) => s.status === 'approved');
-    }
-    const { data, error } = await sb.rpc('shopmap_get_shops', { p_password: password });
-    if (error) throw new Error(error.message.includes('invalid_password') ? 'invalid_password' : error.message);
+  // 公開中のお店（誰でも見られる。連絡先メールは返さない）
+  async function getApprovedShops() {
+    if (DEMO) return demoShops.filter((s) => s.status === 'approved');
+    const { data, error } = await sb.rpc('shopmap_list_shops');
+    if (error) throw new Error(error.message);
     return data;
   }
 

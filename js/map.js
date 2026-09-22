@@ -1,7 +1,6 @@
 (function () {
   const cfg = window.SHOPMAP_CONFIG;
   const CATS = window.SHOPMAP_CATEGORIES;
-  const PW_KEY = 'shopmap_pw';
 
   let shops = [];
   let activeCat = 'all';
@@ -220,37 +219,16 @@
   handle.addEventListener('pointerup', endDrag);
   handle.addEventListener('pointercancel', endDrag);
 
-  // ---------- パスワード → データ読込 ----------
-  const gate = document.getElementById('gate');
-  const gateErr = document.getElementById('gateErr');
-
-  async function unlock(pw, remember) {
+  // ---------- データ読込（誰でも見られる） ----------
+  (async () => {
     try {
-      shops = await ShopAPI.getApprovedShops(pw);
-      if (remember) store.set(PW_KEY, pw);
-      gate.remove();
+      shops = await ShopAPI.getApprovedShops();
       renderChips();
       render();
       map.invalidateSize();
-      return true;
     } catch (e) {
-      store.del(PW_KEY);
-      gateErr.textContent = e.message === 'invalid_password'
-        ? 'パスワードが違います' : '読み込みに失敗しました。通信環境を確認してください。';
-      return false;
+      console.error(e);
+      document.getElementById('count').textContent = '読み込みに失敗しました。通信環境を確認して、もう一度開いてください。';
     }
-  }
-
-  document.getElementById('gateForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    gateErr.textContent = '';
-    unlock(document.getElementById('gatePw').value.trim(), true);
-  });
-
-  const saved = store.get(PW_KEY);
-  if (saved) unlock(saved, false);
-  if (ShopAPI.DEMO) {
-    document.querySelector('.gate-box p').insertAdjacentHTML('beforeend',
-      `<br><small>（デモモード：パスワードは「${esc(cfg.DEMO_PASSWORD)}」）</small>`);
-  }
+  })();
 })();

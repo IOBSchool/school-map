@@ -1,29 +1,23 @@
 (function () {
   const CATS = window.SHOPMAP_CATEGORIES;
   const $ = (id) => document.getElementById(id);
-  const PW_KEY = 'shopmap_pw';
   const wanted = new URLSearchParams(location.search).get('shop');
   const msg = (cls, html) => { $('msg').innerHTML = `<div class="notice ${cls}">${html}</div>`; window.scrollTo(0, 0); };
 
-  // お店の一覧はパスワードが必要（地図と同じ）
-  async function open(pw) {
+  async function open() {
     try {
-      const shops = await ShopAPI.getApprovedShops(pw);
-      store.set(PW_KEY, pw);
-      $('gate').hidden = true;
+      const shops = await ShopAPI.getApprovedShops();
       $('form').hidden = false;
       $('shop').innerHTML = '<option value="">選んでください</option>' + shops
         .sort((a, b) => a.name.localeCompare(b.name, 'ja'))
         .map((s) => `<option value="${esc(s.id)}"${String(s.id) === wanted ? ' selected' : ''}>${(CATS[s.category] || CATS.other).icon} ${esc(s.name)}</option>`).join('');
       People.mount($('peopleEditor'), [], { single: true });
     } catch (e) {
-      store.del(PW_KEY);
-      $('gate').hidden = false;
-      if (pw) msg('err', e.message === 'invalid_password' ? 'パスワードが違います' : '読み込めませんでした。通信環境を確認してください。');
+      console.error(e);
+      msg('err', '読み込めませんでした。通信環境を確認してください。');
     }
   }
-  $('gate').addEventListener('submit', (e) => { e.preventDefault(); $('msg').innerHTML = ''; open($('gatePw').value.trim()); });
-  open(store.get(PW_KEY) || (ShopAPI.DEMO ? window.SHOPMAP_CONFIG.DEMO_PASSWORD : ''));
+  open();
 
   $('form').addEventListener('submit', async (e) => {
     e.preventDefault();

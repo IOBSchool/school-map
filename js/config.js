@@ -5,9 +5,6 @@ window.SHOPMAP_CONFIG = {
   SUPABASE_ANON_KEY: 'sb_publishable_6vtlwnwq3Mi0t6XdGxQN7g_0VFm5PTU',
   PHOTO_BUCKET: 'shopmap-photos',
 
-  // デモモードの閲覧パスワード
-  DEMO_PASSWORD: 'demo',
-
   // お店にいるスクール生の役割
   PEOPLE_ROLES: ['オーナー', '運営者', 'スタッフ', '商品を卸している', '関係者'],
 

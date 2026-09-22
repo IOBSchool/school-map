@@ -29,7 +29,7 @@
             ${safeUrl(p.photo_url) ? `<img class="avatar" src="${esc(p.photo_url)}" alt="" loading="lazy">` : `<span class="avatar ph">${esc((p.name || '?').slice(0, 1))}</span>`}
             <span><b>${esc(p.name)}</b>${p.role ? `<span class="role">${esc(p.role)}</span>` : ''}</span>
           </div>
-          ${(p.certs || []).length ? `<div class="person-row"><span class="label">🎓 認定資格</span><span class="tags">${p.certs.map((c) => `<span class="tag cert">${esc(c)}</span>`).join('')}</span></div>` : ''}
+          ${(p.certs || []).length ? `<div class="person-row"><span class="label">🎓 資格・修了</span><span class="tags">${p.certs.map((c) => `<span class="tag cert">${esc(c)}</span>`).join('')}</span></div>` : ''}
           ${(p.courses || []).length ? `<div class="person-row"><span class="label">📘 受講</span><span class="tags">${p.courses.map((c) => `<span class="tag">${esc(c)}</span>`).join('')}</span></div>` : ''}
           ${p.note ? `<div class="person-note">${esc(p.note)}</div>` : ''}
         </div>`).join('')}
@@ -60,7 +60,7 @@
           <img class="avatar" data-preview alt=""${p._preview || safeUrl(p.photo_url) ? ` src="${esc(p._preview || p.photo_url)}"` : ' hidden'}>
           <label class="photo-pick">プロフィール写真を選ぶ<input type="file" accept="image/*" data-k="photo" hidden></label>
         </div>
-        <div class="sub">🎓 持っている認定資格</div>
+        <div class="sub">🎓 持っている認定資格・修了タイトル</div>
         <div class="checks">${checks(cfg.IOB_CERTS, p.certs, 'certs')}</div>
         <div class="sub">📘 受講した講座</div>
         <div class="checks">${checks(cfg.IOB_COURSES, p.courses, 'courses')}</div>

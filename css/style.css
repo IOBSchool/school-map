@@ -187,6 +187,11 @@ button { font: inherit; cursor: pointer; }
   flex: 1 1 30%; text-align: center; padding: 11px 8px; border-radius: 10px; font-size: 13px;
   font-weight: 700; text-decoration: none; border: 1px solid var(--line); color: var(--brown); background: #fff;
 }
+.join-link {
+  display: block; margin-top: 14px; padding: 12px; text-align: center; font-size: 13px; font-weight: 700;
+  border: 1.5px dashed var(--blue); border-radius: 10px; color: var(--blue); text-decoration: none;
+}
+.tabs { flex-wrap: wrap; }
 .links a.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 /* ---------- フォーム・管理画面共通 ---------- */

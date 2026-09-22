@@ -25,6 +25,10 @@
     { id: 'd4', status: 'approved', name: 'Sample: Bioladen München', category: 'shop',
       photo_url: '', hours: 'Mo–Sa 9:00–19:00', address: 'München（サンプル住所）', lat: 48.137, lng: 11.575,
       message: '日本語OKです。旅行の際はぜひ。', website: '', instagram: 'example', owner_name: '' },
+    { id: 'd6', status: 'approved', name: 'サンプル：手づくり石けん工房（オンライン販売）', category: 'online',
+      photo_url: '', hours: '', address: null, lat: null, lng: null,
+      message: 'スクール生は送料無料', website: 'https://example.com', instagram: 'example', owner_name: '',
+      people: [{ name: 'サンプル 桃子', role: 'オーナー', certs: ['オーガニックコスメ専門家資格'], courses: ['オーガニックコスメ専門家コース'], note: '' }] },
     { id: 'd5', status: 'pending', name: 'サンプル：承認待ちのお宿', category: 'stay',
       photo_url: '', hours: 'チェックイン15時', address: '北海道（サンプル住所）', lat: 43.06, lng: 141.35,
       message: '連泊割あり', website: '', instagram: '', owner_name: 'サンプル 次郎', contact_email: 'sample@example.com',
@@ -87,6 +91,34 @@
     const { error } = await sb.from('shopmap_shops').update(fields).eq('id', id);
     if (error) throw error;
   }
+  // ---- スクール生の追加申請（既存のお店に「私もここにいます」） ----
+  const demoRequests = [];
+  async function submitMemberRequest(shop_id, person, contact_email) {
+    if (DEMO) { demoRequests.push({ id: 'r' + Date.now(), shop_id, person, contact_email, status: 'pending', created_at: new Date().toISOString() }); return; }
+    const { error } = await sb.from('shopmap_member_requests').insert({ shop_id, person, contact_email, status: 'pending' });
+    if (error) throw error;
+  }
+  async function adminListRequests(status) {
+    if (DEMO) return demoRequests.filter((r) => r.status === status)
+      .map((r) => ({ ...r, shop: demoShops.find((s) => s.id === r.shop_id) }));
+    const { data, error } = await sb.from('shopmap_member_requests')
+      .select('*, shop:shopmap_shops(id, name, people)').eq('status', status).order('created_at', { ascending: false });
+    if (error) throw error;
+    return data;
+  }
+  // 承認＝お店の people に追加してから申請を承認済みにする
+  async function adminDecideRequest(req, approve) {
+    if (approve) {
+      const current = DEMO ? (demoShops.find((s) => s.id === req.shop_id).people || [])
+        : ((await sb.from('shopmap_shops').select('people').eq('id', req.shop_id).single()).data?.people || []);
+      await adminUpdate(req.shop_id, { people: [...current, req.person] });
+    }
+    const status = approve ? 'approved' : 'rejected';
+    if (DEMO) { demoRequests.find((r) => r.id === req.id).status = status; return; }
+    const { error } = await sb.from('shopmap_member_requests').update({ status }).eq('id', req.id);
+    if (error) throw error;
+  }
+
   async function adminDelete(id) {
     if (DEMO) { demoShops.splice(demoShops.findIndex((s) => s.id === id), 1); return; }
     const { error } = await sb.from('shopmap_shops').delete().eq('id', id);
@@ -94,7 +126,7 @@
   }
 
   window.ShopAPI = {
-    DEMO, getApprovedShops, uploadPhoto, submitShop,
+    DEMO, getApprovedShops, uploadPhoto, submitShop, submitMemberRequest, adminListRequests, adminDecideRequest,
     adminSignIn, adminCurrentUser, adminSignOut, adminListShops, adminSetStatus, adminUpdate, adminDelete,
   };
 })();

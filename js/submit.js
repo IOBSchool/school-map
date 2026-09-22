@@ -10,6 +10,12 @@
     Object.entries(CATS).map(([k, c]) => `<option value="${k}">${c.icon} ${esc(c.label)}</option>`).join('');
 
   People.mount($('peopleEditor'), []);
+  const isOnline = () => $('category').value === 'online';
+  $('category').addEventListener('change', () => {
+    $('addressField').hidden = isOnline();
+    if (isOnline()) pick.invalidateSize();
+    else setTimeout(() => pick.invalidateSize(), 0);
+  });
 
   // ---------- 位置指定用の小さな地図 ----------
   const pick = L.map('pickMap').setView(cfg.INITIAL_CENTER, cfg.INITIAL_ZOOM);
@@ -80,10 +86,10 @@
     const v = (n) => f.elements[n].value.trim();
 
     const missing = [];
-    if (!v('name')) missing.push('お店の名前');
+    if (!v('name')) missing.push('お店・ブランド・活動の名前');
     if (!v('category')) missing.push('カテゴリ');
-    if (!v('address')) missing.push('住所');
-    if (!pin) missing.push('地図の位置（「住所から地図の位置を探す」か地図をタップ）');
+    if (!isOnline() && !v('address')) missing.push('住所');
+    if (!isOnline() && !pin) missing.push('地図の位置（「住所から地図の位置を探す」か地図をタップ）');
     if (!f.elements.contact_email.checkValidity() || !v('contact_email')) missing.push('ご連絡先メールアドレス');
     if (v('website') && !safeUrl(v('website'))) missing.push('WebサイトのURL（https:// から）');
     if (missing.length) return msg('err', '次の項目を確認してください：<br>・' + missing.map(esc).join('<br>・'));
@@ -94,9 +100,9 @@
     try {
       const photo_url = photoBlob ? await ShopAPI.uploadPhoto(photoBlob) : null;
       const people = await People.collect($('peopleEditor'), ShopAPI.uploadPhoto);
-      const { lat, lng } = pin.getLatLng();
+      const { lat, lng } = isOnline() ? { lat: null, lng: null } : pin.getLatLng();
       await ShopAPI.submitShop({
-        name: v('name'), category: v('category'), address: v('address'),
+        name: v('name'), category: v('category'), address: isOnline() ? null : v('address'),
         lat, lng, hours: v('hours') || null, message: v('message') || null,
         website: v('website') || null, instagram: v('instagram') || null,
         people, contact_email: v('contact_email'), photo_url,
@@ -106,6 +112,7 @@
       $('photoPreview').style.display = 'none';
       if (pin) { pin.remove(); pin = null; }
       People.mount($('peopleEditor'), []);
+      $('addressField').hidden = false;
       msg('ok', 'ありがとうございます！受け付けました。<br>内容を確認して、地図に載せたらお知らせします。');
     } catch (err) {
       console.error(err);

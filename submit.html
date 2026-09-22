@@ -15,19 +15,20 @@
   <main class="page">
     <a class="back" href="index.html">← 地図にもどる</a>
     <h1>お店を登録する</h1>
-    <p class="lead">スクール生のお店や、仲間に紹介したい関連スポットを登録できます。送っていただいた内容は確認後に地図へ載ります。</p>
+    <p class="lead">スクール生のお店や、仲間に紹介したい関連スポット、オンラインでの活動や商品を登録できます。送っていただいた内容は確認後に地図へ載ります。</p>
     <div id="msg"></div>
 
     <form id="form" novalidate>
       <div class="field">
-        <label for="name">お店の名前<span class="req">必須</span></label>
+        <label for="name">お店・ブランド・活動の名前<span class="req">必須</span></label>
         <input id="name" name="name" maxlength="80" required>
       </div>
       <div class="field">
         <label for="category">カテゴリ<span class="req">必須</span></label>
         <select id="category" name="category" required></select>
+        <div class="hint">お店という「箱」がない方（オンラインで活動している・商品を作って販売しているなど）は「🌐 オンライン・商品」を選んでください。住所は不要で、地図のピンではなく「☰ 一覧」に載ります。</div>
       </div>
-      <div class="field">
+      <div class="field" id="addressField">
         <label for="address">住所<span class="req">必須</span></label>
         <input id="address" name="address" required placeholder="例：東京都渋谷区神宮前1-2-3">
         <button class="btn sub" type="button" id="geoBtn">住所から地図の位置を探す</button>

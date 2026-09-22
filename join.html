@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>スクール生の追加申請｜スクール生のお店マップ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Old+Mincho:wght@700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <script>(function(){var t=new URLSearchParams(location.search).get("theme");document.documentElement.dataset.theme=/^[1-5]$/.test(t||"")?t:"2";})();</script>
+</head>
+<body>
+  <main class="page">
+    <a class="back" href="index.html">← 地図にもどる</a>
+    <h1>私もこのお店にいます</h1>
+    <p class="lead">地図に載っているお店で働いている・関わっているスクール生の方は、ここからご自身のプロフィールを追加できます。確認後にお店の詳細に表示されます。</p>
+    <div id="msg"></div>
+
+    <form id="gate" class="gate-box" style="margin:24px auto" hidden>
+      <p class="lead">スクール生の共通パスワードを入れてください。</p>
+      <div class="field"><input id="gatePw" type="password" placeholder="パスワード" autocomplete="current-password"></div>
+      <button class="btn" type="submit">次へ</button>
+    </form>
+
+    <form id="form" novalidate hidden>
+      <div class="field">
+        <label for="shop">どのお店ですか？<span class="req">必須</span></label>
+        <select id="shop" required></select>
+        <div class="hint">地図にまだ載っていないお店は、先に<a href="submit.html">お店の登録</a>をしてください。</div>
+      </div>
+      <div class="field">
+        <label>あなたのプロフィール<span class="req">お名前は必須</span></label>
+        <div id="peopleEditor"></div>
+      </div>
+      <div class="field">
+        <label for="contact_email">ご連絡先メールアドレス<span class="req">必須</span></label>
+        <input id="contact_email" type="email" required>
+        <div class="hint">内容の確認でご連絡する時だけ使います。地図には表示されません。</div>
+      </div>
+      <button class="btn" type="submit" id="submitBtn">この内容で申請する</button>
+    </form>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/people.js"></script>
+  <script src="js/join.js"></script>
+</body>
+</html>

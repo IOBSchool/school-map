@@ -69,11 +69,13 @@
       </fieldset>`;
   }
 
-  function mount(container, people) {
+  // opts.single=true は1人分だけ（追加・削除ボタンなし）
+  function mount(container, people, opts = {}) {
     let list = (people && people.length) ? people.map((p) => ({ ...p })) : [{}];
     const draw = () => {
       container.innerHTML = list.map(personBlock).join('') +
-        '<button type="button" class="btn sub" data-add>＋ もう1人追加</button>';
+        (opts.single ? '' : '<button type="button" class="btn sub" data-add>＋ もう1人追加</button>');
+      if (opts.single) container.querySelectorAll('[data-remove], legend').forEach((x) => x.remove());
       [...container.querySelectorAll('.person-edit')].forEach((f, i) => { f._blob = list[i]._blob; f._photo = list[i].photo_url; });
     };
     const sync = () => { list = read(container, true); };

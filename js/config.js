@@ -41,5 +41,6 @@ window.SHOPMAP_CATEGORIES = {
   shop:   { label: '物販',         icon: '🛍', color: '#0085c9' },
   stay:   { label: '宿泊',         icon: '🏡', color: '#85634b' },
   school: { label: '教室・講座',   icon: '📚', color: '#6a5acd' },
+  online: { label: 'オンライン・商品', icon: '🌐', color: '#2a9d8f' }, // 実店舗なし（オンライン活動・商品のみ）＝ピンは出ず一覧に載る
   other:  { label: 'その他',       icon: '📍', color: '#553727' },
 };

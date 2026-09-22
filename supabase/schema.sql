@@ -143,3 +143,33 @@ alter table public.shopmap_shops add column if not exists people jsonb not null 
 alter table public.shopmap_shops drop constraint if exists shopmap_people_is_array;
 alter table public.shopmap_shops add constraint shopmap_people_is_array check (jsonb_typeof(people) = 'array');
 -- shopmap_get_shops の returns table 末尾に people jsonb を追加し、select にも s.people を追加して再作成すること
+
+-- =====================================================================
+-- 追加（2026-09-22）：①スクール生の追加申請（既存のお店に「私もここにいます」）
+--                    ②実店舗なし（オンライン・商品）カテゴリ＝住所・位置なしで登録可
+-- =====================================================================
+create table if not exists public.shopmap_member_requests (
+  id            uuid primary key default gen_random_uuid(),
+  created_at    timestamptz not null default now(),
+  shop_id       uuid not null references public.shopmap_shops(id) on delete cascade,
+  person        jsonb not null check (jsonb_typeof(person) = 'object' and coalesce(person->>'name', '') <> ''),
+  contact_email text,
+  status        text not null default 'pending' check (status in ('pending', 'approved', 'rejected'))
+);
+alter table public.shopmap_member_requests enable row level security;
+drop policy if exists shopmap_member_submit on public.shopmap_member_requests;
+create policy shopmap_member_submit on public.shopmap_member_requests for insert to anon, authenticated
+  with check (status = 'pending');
+drop policy if exists shopmap_member_admin_all on public.shopmap_member_requests;
+create policy shopmap_member_admin_all on public.shopmap_member_requests for all to authenticated
+  using (public.shopmap_is_admin()) with check (public.shopmap_is_admin());
+
+alter table public.shopmap_shops drop constraint if exists shopmap_shops_category_check;
+alter table public.shopmap_shops add constraint shopmap_shops_category_check
+  check (category in ('food','farm','salon','shop','stay','school','online','other'));
+alter table public.shopmap_shops alter column lat drop not null;
+alter table public.shopmap_shops alter column lng drop not null;
+alter table public.shopmap_shops alter column address drop not null;
+alter table public.shopmap_shops drop constraint if exists shopmap_location_required;
+alter table public.shopmap_shops add constraint shopmap_location_required
+  check (category = 'online' or (lat is not null and lng is not null and coalesce(address, '') <> ''));

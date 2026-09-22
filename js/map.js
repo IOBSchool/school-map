@@ -32,13 +32,15 @@
   function render() {
     cluster.clearLayers();
     const list = shops.filter((s) => activeCat === 'all' || s.category === activeCat);
-    list.forEach((s) => {
+    list.filter(hasPin).forEach((s) => {
       L.marker([s.lat, s.lng], { icon: pinIcon(s.category), title: s.name })
         .on('click', () => openSheet(s))
         .addTo(cluster);
     });
-    document.getElementById('count').textContent = `${list.length}件のお店`;
+    const online = list.filter((s) => !hasPin(s)).length;
+    document.getElementById('count').textContent = `${list.length}件のお店${online ? `（うちオンライン・商品${online}件は「☰ 一覧」に）` : ''}`;
   }
+  function hasPin(s) { return s.lat != null && s.lng != null; }
 
   // ---------- カテゴリ絞り込み ----------
   function renderChips() {
@@ -57,7 +59,7 @@
     activeCat = b.dataset.cat;
     renderChips();
     render();
-    fitVisible();
+    if (activeCat === 'online') openList(); else fitVisible();
   });
 
   function fitVisible() {
@@ -80,7 +82,7 @@
       }).addTo(map);
       // 近い順に3件が入る範囲へズーム（なければ現在地を中心に）
       const near = shops
-        .filter((s) => activeCat === 'all' || s.category === activeCat)
+        .filter((s) => (activeCat === 'all' || s.category === activeCat) && hasPin(s))
         .map((s) => ({ s, d: distKm(me, [s.lat, s.lng]) }))
         .sort((a, b) => a.d - b.d).slice(0, 3).filter((x) => x.d < 50);
       if (near.length) {
@@ -114,11 +116,11 @@
 
   function openSheet(s) {
     const c = CATS[s.category] || CATS.other;
-    const dist = me ? distKm(me, [s.lat, s.lng]) : null;
+    const dist = me && hasPin(s) ? distKm(me, [s.lat, s.lng]) : null;
     const web = safeUrl(s.website), ig = igUrl(s.instagram);
     // 道案内は住所で（ピンは町名レベルの精度のことがあるため）。括弧内の補足は外す
     const dest = (s.address || '').replace(/（[^）]*）|\([^)]*\)/g, '').trim() || `${s.lat},${s.lng}`;
-    const route = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
+    const route = hasPin(s) || s.address ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}` : '';
     const photo = safeUrl(s.photo_url) || (s.photo_url && s.photo_url.startsWith('blob:') ? s.photo_url : '');
 
     document.getElementById('sheetBody').innerHTML = `
@@ -129,18 +131,19 @@
       ${s.message ? `<div class="perk"><b>スクール生のみなさんへ</b>${esc(s.message)}</div>` : ''}
       <ul class="info">
         ${s.hours ? `<li><span>🕒</span><span>${esc(s.hours)}</span></li>` : ''}
-        <li><span>📍</span><span>${esc(s.address)}${dist != null ? `<br><small>現在地から約${dist < 10 ? dist.toFixed(1) : Math.round(dist)}km</small>` : ''}</span></li>
+        ${s.address ? `<li><span>📍</span><span>${esc(s.address)}${dist != null ? `<br><small>現在地から約${dist < 10 ? dist.toFixed(1) : Math.round(dist)}km</small>` : ''}</span></li>` : ''}
       </ul>
       <div class="links">
-        <a class="primary" href="${route}" target="_blank" rel="noopener">ここへ行く</a>
+        ${route ? `<a class="primary" href="${route}" target="_blank" rel="noopener">ここへ行く</a>` : ''}
         ${web ? `<a href="${esc(web)}" target="_blank" rel="noopener">Webサイト</a>` : ''}
         ${ig ? `<a href="${esc(ig)}" target="_blank" rel="noopener">Instagram</a>` : ''}
-      </div>`;
+      </div>
+      <a class="join-link" href="join.html?shop=${encodeURIComponent(s.id)}">＋ 私もこのお店にいます（スクール生の追加申請）</a>`;
     document.querySelector('.sheet-body').scrollTop = 0;
     sheet.classList.add('open');
     backdrop.classList.add('open');
     sheet.setAttribute('aria-hidden', 'false');
-    map.panTo([s.lat, s.lng], { animate: true });
+    if (hasPin(s)) map.panTo([s.lat, s.lng], { animate: true });
   }
   // ---------- 一覧（お店の名前・スクール生の名前・地名で探す） ----------
   function openList() {
@@ -163,7 +166,7 @@
         const hay = [s.name, People.searchText(s), s.address].join(' ').toLowerCase();
         return words.every((w) => hay.includes(w));
       })
-      .map((s) => ({ s, d: me ? distKm(me, [s.lat, s.lng]) : null }))
+      .map((s) => ({ s, d: me && hasPin(s) ? distKm(me, [s.lat, s.lng]) : null }))
       .sort((a, b) => (a.d != null && b.d != null ? a.d - b.d : 0));
     document.getElementById('shopList').innerHTML = list.length ? list.map(({ s, d }) => {
       const c = CATS[s.category] || CATS.other;
@@ -172,7 +175,7 @@
         <span class="li-icon" style="background:${c.color}">${c.icon}</span>
         <span class="li-main"><b>${esc(s.name)}</b>
           ${people ? `<small class="li-people">👤 ${esc(people)}</small>` : ''}
-          <small>${esc(s.address)}${d != null ? `・約${d < 10 ? d.toFixed(1) : Math.round(d)}km` : ''}</small></span>
+          <small>${esc(s.address || '🌐 オンライン・商品（実店舗なし）')}${d != null ? `・約${d < 10 ? d.toFixed(1) : Math.round(d)}km` : ''}</small></span>
       </button></li>`;
     }).join('') : '<li class="li-empty">見つかりませんでした</li>';
   }
@@ -182,7 +185,7 @@
     if (!b) return;
     const s = shops.find((x) => String(x.id) === b.dataset.id);
     if (!s) return;
-    map.setView([s.lat, s.lng], Math.max(map.getZoom(), 14));
+    if (hasPin(s)) map.setView([s.lat, s.lng], Math.max(map.getZoom(), 14));
     openSheet(s);
   });
 

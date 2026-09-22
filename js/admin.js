@@ -36,8 +36,30 @@
     load();
   });
 
+  let reqsById = {};
+  async function loadRequests() {
+    const rows = await ShopAPI.adminListRequests('pending');
+    reqsById = Object.fromEntries(rows.map((r) => [String(r.id), r]));
+    $('list').innerHTML = rows.length ? rows.map((r) => `
+      <article class="admin-card" data-req="${esc(r.id)}">
+        <h3>「${esc(r.shop?.name || '（削除されたお店）')}」への追加申請</h3>
+        ${People.detailHtml({ people: [r.person] })}
+        <dl>
+          ${r.contact_email ? `<dt>連絡先</dt><dd>${esc(r.contact_email)}</dd>` : ''}
+          <dt>受付日</dt><dd>${esc(new Date(r.created_at).toLocaleString('ja-JP'))}</dd>
+        </dl>
+        <div class="admin-actions">
+          <button class="approve" data-req-act="approve">承認してお店に追加</button><button data-req-act="reject">見送る</button>
+        </div>
+      </article>`).join('') : '<p class="empty">承認待ちの申請はありません</p>';
+  }
+
   async function load() {
     $('list').innerHTML = '<p class="empty">読み込み中…</p>';
+    if (tab === 'requests') {
+      try { await loadRequests(); } catch (err) { console.error(err); $('list').innerHTML = '<p class="empty">読み込めませんでした</p>'; }
+      return;
+    }
     try {
       const rows = await ShopAPI.adminListShops(tab);
       rowsById = Object.fromEntries(rows.map((r) => [String(r.id), r]));
@@ -78,6 +100,17 @@
   }
 
   $('list').addEventListener('click', async (e) => {
+    const rb = e.target.closest('button[data-req-act]');
+    if (rb) {
+      const req = reqsById[rb.closest('[data-req]').dataset.req];
+      rb.disabled = true;
+      try {
+        await ShopAPI.adminDecideRequest(req, rb.dataset.reqAct === 'approve');
+        note('ok', rb.dataset.reqAct === 'approve' ? `「${req.shop?.name || ''}」に追加しました。` : '見送りました。');
+        load();
+      } catch (err) { console.error(err); note('err', '更新できませんでした。'); rb.disabled = false; }
+      return;
+    }
     const b = e.target.closest('button[data-act]');
     if (!b) return;
     const cardEl = b.closest('.admin-card');

@@ -148,7 +148,7 @@ button { font: inherit; cursor: pointer; }
 .person-edit { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin: 0 0 10px; background: #fff; }
 .person-edit legend { font-size: 12px; font-weight: 700; padding: 0 6px; color: var(--brown-sub); }
 .person-edit input:not([type=checkbox]), .person-edit select { width: 100%; padding: 10px; font-size: 16px; border: 1px solid var(--line); border-radius: 8px; color: var(--brown); background: #fff; font-family: inherit; }
-.person-edit .row2 { display: grid; grid-template-columns: 1fr 9em; gap: 6px; }
+.person-edit .row2 { display: grid; grid-template-columns: 1fr 10.5em; gap: 6px; }
 .person-edit .sub { font-size: 12px; font-weight: 700; margin: 12px 0 6px; }
 .checks { display: flex; flex-wrap: wrap; gap: 6px; }
 .check { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 400 !important; padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; margin: 0 !important; }

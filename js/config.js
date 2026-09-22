@@ -9,7 +9,7 @@ window.SHOPMAP_CONFIG = {
   DEMO_PASSWORD: 'demo',
 
   // お店にいるスクール生の役割
-  PEOPLE_ROLES: ['オーナー', '運営者', 'スタッフ', '関係者'],
+  PEOPLE_ROLES: ['オーナー', '運営者', 'スタッフ', '商品を卸している', '関係者'],
 
   // 🚨仮の一覧。正式名称をなつこさんに確認して直すこと（講座名は言い換え禁止）
   IOB_COURSES: [

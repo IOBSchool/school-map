@@ -13,6 +13,7 @@
   const isOnline = () => $('category').value === 'online';
   $('category').addEventListener('change', () => {
     $('addressField').hidden = isOnline();
+    $('accessField').hidden = isOnline();
     if (isOnline()) pick.invalidateSize();
     else setTimeout(() => pick.invalidateSize(), 0);
   });
@@ -51,32 +52,18 @@
     }
   });
 
-  // ---------- 写真：送る前に端末側で縮小（通信量とストレージ節約） ----------
+  // ---------- 写真：位置・大きさを選んでもらってから端末側で縮小 ----------
   let photoBlob = null;
   $('photo').addEventListener('change', async (e) => {
     const f = e.target.files[0];
-    photoBlob = null;
-    $('photoPreview').style.display = 'none';
+    e.target.value = '';
     if (!f) return;
-    try {
-      photoBlob = await resizeImage(f, 1280, 0.82);
-      $('photoPreview').src = URL.createObjectURL(photoBlob);
-      $('photoPreview').style.display = 'block';
-    } catch {
-      alert('この写真は読み込めませんでした。JPEGかPNGでお試しください。');
-      e.target.value = '';
-    }
+    const blob = await Cropper.open(f, { aspect: 16 / 9, outW: 1280 });
+    if (!blob) return; // キャンセル
+    photoBlob = blob;
+    $('photoPreview').src = URL.createObjectURL(blob);
+    $('photoPreview').style.display = 'block';
   });
-
-  async function resizeImage(file, maxSide, quality) {
-    const bmp = await createImageBitmap(file);
-    const scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.round(bmp.width * scale);
-    canvas.height = Math.round(bmp.height * scale);
-    canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
-    return new Promise((ok, ng) => canvas.toBlob((b) => (b ? ok(b) : ng()), 'image/jpeg', quality));
-  }
 
   // ---------- 送信 ----------
   $('form').addEventListener('submit', async (e) => {
@@ -91,6 +78,7 @@
     if (!isOnline() && !v('address')) missing.push('住所');
     if (!isOnline() && !pin) missing.push('地図の位置（「住所から地図の位置を探す」か地図をタップ）');
     if (!f.elements.contact_email.checkValidity() || !v('contact_email')) missing.push('ご連絡先メールアドレス');
+    if (v('contact_email') && v('contact_email') !== v('contact_email2')) missing.push('ご連絡先メールアドレス（確認用）が一致しません');
     if (v('website') && !safeUrl(v('website'))) missing.push('WebサイトのURL（https:// から）');
     if (missing.length) return msg('err', '次の項目を確認してください：<br>・' + missing.map(esc).join('<br>・'));
 
@@ -103,7 +91,7 @@
       const { lat, lng } = isOnline() ? { lat: null, lng: null } : pin.getLatLng();
       await ShopAPI.submitShop({
         name: v('name'), category: v('category'), address: isOnline() ? null : v('address'),
-        lat, lng, hours: v('hours') || null, message: v('message') || null,
+        lat, lng, hours: v('hours') || null, access: isOnline() ? null : (v('access') || null), message: v('message') || null,
         website: v('website') || null, instagram: v('instagram') || null,
         people, contact_email: v('contact_email'), photo_url,
       });
@@ -113,6 +101,7 @@
       if (pin) { pin.remove(); pin = null; }
       People.mount($('peopleEditor'), []);
       $('addressField').hidden = false;
+      $('accessField').hidden = false;
       msg('ok', 'ありがとうございます！受け付けました。<br>内容を確認して、地図に載せたらお知らせします。');
     } catch (err) {
       console.error(err);

@@ -34,6 +34,11 @@
         <div id="pickMap" class="pick-map"></div>
         <div class="hint" id="pickHint">地図をタップすると、ピンの位置を直せます。</div>
       </div>
+      <div class="field" id="accessField">
+        <label for="access">アクセス・行き方</label>
+        <textarea id="access" name="access" maxlength="400" placeholder="例：JR〇〇駅から徒歩5分／お車の場合は近隣コインパーキングをご利用ください"></textarea>
+        <div class="hint">Googleマップを見るのが苦手な方もいます。駅・バス・車での行き方を書いておくと親切です。</div>
+      </div>
       <div class="field">
         <label for="hours">営業時間</label>
         <input id="hours" name="hours" placeholder="例：10:00〜17:00（火曜定休）">
@@ -65,6 +70,11 @@
         <input id="contact_email" name="contact_email" type="email" required>
         <div class="hint">内容の確認でご連絡する時だけ使います。地図には表示されません。</div>
       </div>
+      <div class="field">
+        <label for="contact_email2">ご連絡先メールアドレス（確認用）<span class="req">必須</span></label>
+        <input id="contact_email2" name="contact_email2" type="email" required>
+        <div class="hint">入力ミスがないか確認のため、もう一度入力してください。</div>
+      </div>
       <input class="hp" name="website2" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button class="btn" type="submit" id="submitBtn">この内容で送る</button>
     </form>
@@ -74,6 +84,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
+  <script src="js/cropper.js"></script>
   <script src="js/people.js"></script>
   <script src="js/submit.js"></script>
 </body>

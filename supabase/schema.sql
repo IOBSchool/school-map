@@ -173,3 +173,42 @@ alter table public.shopmap_shops alter column address drop not null;
 alter table public.shopmap_shops drop constraint if exists shopmap_location_required;
 alter table public.shopmap_shops add constraint shopmap_location_required
   check (category = 'online' or (lat is not null and lng is not null and coalesce(address, '') <> ''));
+
+-- =====================================================================
+-- 反映漏れの追いつき（2026-09-26）：本番では 2026-09-22 に「共通パスワードを外す」
+-- 変更をSQL Editorで直接行い、閲覧関数を shopmap_get_shops(パスワード必須) から
+-- shopmap_list_shops()（引数なし・誰でも実行可）に差し替えた。このファイルへの
+-- 反映が漏れていたので、ここで追いつかせる（js/api.js が呼んでいる名前と合わせる）。
+-- =====================================================================
+create or replace function public.shopmap_list_shops()
+returns table (
+  id uuid, name text, category text, photo_url text, hours text, access text,
+  address text, lat double precision, lng double precision,
+  message text, website text, instagram text, owner_name text, people jsonb
+)
+language sql stable security definer
+set search_path = public
+as $$
+  select s.id, s.name, s.category, s.photo_url, s.hours, s.access,
+         s.address, s.lat, s.lng,
+         s.message, s.website, s.instagram, s.owner_name, s.people
+  from public.shopmap_shops s
+  where s.status = 'approved'
+  order by s.approved_at desc nulls last;
+$$;
+revoke all on function public.shopmap_list_shops() from public;
+grant execute on function public.shopmap_list_shops() to anon, authenticated;
+
+-- =====================================================================
+-- 追加（2026-09-26）：スクール生からのフィードバック対応
+--   ①アクセス・行き方の自由記述欄（Googleマップが苦手な方向け）
+--   ②カテゴリ「ショップ・スーパー」を「ショップ」と「スーパー」に分割
+-- =====================================================================
+alter table public.shopmap_shops add column if not exists access text;
+
+alter table public.shopmap_shops drop constraint if exists shopmap_shops_category_check;
+alter table public.shopmap_shops add constraint shopmap_shops_category_check
+  check (category in ('food','farm','salon','shop','super','stay','school','online','other'));
+
+-- 🚨このSQLを実行したら、既存の「shop」登録のうち実際はスーパーのお店は
+-- 管理画面の「編集」からカテゴリを「スーパー」に直してください（自動振り分けはしません）。

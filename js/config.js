@@ -35,7 +35,8 @@ window.SHOPMAP_CATEGORIES = {
   food:   { label: '飲食',         icon: '🍽', color: '#f26b3b' },
   farm:   { label: '農家',         icon: '🌾', color: '#7a9a3a' },
   salon:  { label: 'サロン',       icon: '💆', color: '#c86a9a' },
-  shop:   { label: 'ショップ・スーパー', icon: '🛍', color: '#0085c9' },
+  shop:   { label: 'ショップ',     icon: '🛍', color: '#0085c9' },
+  super:  { label: 'スーパー',     icon: '🛒', color: '#c9a227' },
   stay:   { label: '宿泊',         icon: '🏡', color: '#85634b' },
   school: { label: '教室・講座',   icon: '📚', color: '#6a5acd' },
   online: { label: 'オンライン・商品', icon: '🌐', color: '#2a9d8f' }, // 実店舗なし（オンライン活動・商品のみ）＝ピンは出ず一覧に載る

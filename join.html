@@ -31,6 +31,11 @@
         <input id="contact_email" type="email" required>
         <div class="hint">内容の確認でご連絡する時だけ使います。地図には表示されません。</div>
       </div>
+      <div class="field">
+        <label for="contact_email2">ご連絡先メールアドレス（確認用）<span class="req">必須</span></label>
+        <input id="contact_email2" type="email" required>
+        <div class="hint">入力ミスがないか確認のため、もう一度入力してください。</div>
+      </div>
       <button class="btn" type="submit" id="submitBtn">この内容で申請する</button>
     </form>
   </main>
@@ -38,6 +43,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
+  <script src="js/cropper.js"></script>
   <script src="js/people.js"></script>
   <script src="js/join.js"></script>
 </body>

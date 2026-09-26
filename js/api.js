@@ -8,7 +8,8 @@
   const demoShops = [
     { id: 'd1', status: 'approved', name: 'サンプル：オーガニックカフェ 陽だまり', category: 'food',
       photo_url: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800',
-      hours: '10:00〜17:00（火曜定休）', address: '東京都渋谷区（サンプル住所）', lat: 35.664, lng: 139.698,
+      hours: '10:00〜17:00（火曜定休）', access: 'JR渋谷駅から徒歩8分。専用駐車場はありません。',
+      address: '東京都渋谷区（サンプル住所）', lat: 35.664, lng: 139.698,
       message: 'スクール生の方はドリンク1杯サービス！「マップを見た」とお声がけください。',
       website: 'https://example.com', instagram: 'example', owner_name: '',
       people: [
@@ -25,6 +26,10 @@
     { id: 'd4', status: 'approved', name: 'Sample: Bioladen München', category: 'shop',
       photo_url: '', hours: 'Mo–Sa 9:00–19:00', address: 'München（サンプル住所）', lat: 48.137, lng: 11.575,
       message: '日本語OKです。旅行の際はぜひ。', website: '', instagram: 'example', owner_name: '' },
+    { id: 'd7', status: 'approved', name: 'サンプル：スーパー きたのめぐみ', category: 'super',
+      photo_url: '', hours: '9:00〜21:00', access: '最寄駅から徒歩30分以上。車での来店がおすすめです。',
+      address: '北海道（サンプル住所）', lat: 43.42, lng: 141.75,
+      message: '', website: '', instagram: '', owner_name: '' },
     { id: 'd6', status: 'approved', name: 'サンプル：手づくり石けん工房（オンライン販売）', category: 'online',
       photo_url: '', hours: '', address: null, lat: null, lng: null,
       message: 'スクール生は送料無料', website: 'https://example.com', instagram: 'example', owner_name: '',

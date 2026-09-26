@@ -88,6 +88,7 @@
           ${row('カテゴリ', esc(c.label))}
           ${row('住所', `${esc(s.address)}<br><a href="${osm}" target="_blank" rel="noopener">ピンの位置を確認</a>`)}
           ${row('営業時間', esc(s.hours))}
+          ${row('アクセス', esc(s.access))}
           ${row('特典', esc(s.message))}
           ${row('Web', safeUrl(s.website) ? `<a href="${esc(s.website)}" target="_blank" rel="noopener">${esc(s.website)}</a>` : '')}
           ${row('Instagram', igUrl(s.instagram) ? `<a href="${esc(igUrl(s.instagram))}" target="_blank" rel="noopener">${esc(s.instagram)}</a>` : '')}
@@ -161,7 +162,8 @@
   // 編集できる項目（位置の緯度経度は住所の変更では動かない点に注意）
   const EDIT_FIELDS = [
     ['name', 'お店の名前'], ['category', 'カテゴリ'],
-    ['message', 'スクール生へのメッセージ・特典', 'area'], ['hours', '営業時間'], ['address', '住所'],
+    ['message', 'スクール生へのメッセージ・特典', 'area'], ['hours', '営業時間'],
+    ['access', 'アクセス・行き方', 'area'], ['address', '住所'],
     ['website', 'WebサイトのURL'], ['instagram', 'Instagram'], ['contact_email', '連絡先メール（地図には出ない）'],
   ];
   function editForm(s) {

@@ -233,3 +233,17 @@ button { font: inherit; cursor: pointer; }
 .admin-edit .field label { font-size: 12px; }
 .admin-edit .field input, .admin-edit .field textarea, .admin-edit .field select { font-size: 15px; padding: 9px; }
 .empty { text-align: center; color: var(--brown-sub); padding: 40px 0; font-size: 14px; }
+
+/* ---------- 写真クロッパー（拡大縮小・位置調整） ---------- */
+.cropper-overlay {
+  position: fixed; inset: 0; z-index: 3000; background: rgba(0, 0, 0, .55);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.cropper-box { background: #fff; border-radius: 16px; padding: 18px; width: 100%; max-width: 360px; text-align: center; box-shadow: var(--shadow); }
+.cropper-title { font-size: 13px; color: var(--brown-sub); margin: 0 0 12px; }
+.cropper-frame { margin: 0 auto; border-radius: 10px; overflow: hidden; background: var(--bg); touch-action: none; cursor: grab; }
+.cropper-frame.round { border-radius: 50%; }
+.cropper-frame canvas { display: block; touch-action: none; }
+.cropper-zoom { width: 100%; margin: 14px 0 4px; }
+.cropper-actions { display: flex; gap: 8px; margin-top: 10px; }
+.cropper-actions .btn { margin-top: 0; }

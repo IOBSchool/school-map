@@ -83,12 +83,17 @@
       const inp = e.target.closest('input[data-k="photo"]');
       if (!inp || !inp.files[0]) return;
       const f = inp.closest('.person-edit');
+      const file = inp.files[0];
+      inp.value = '';
+      let blob;
       try {
-        f._blob = await resizeSquare(inp.files[0], 400);
-        const img = f.querySelector('[data-preview]');
-        img.src = URL.createObjectURL(f._blob);
-        img.hidden = false;
-      } catch { alert('この写真は読み込めませんでした。JPEGかPNGでお試しください。'); }
+        blob = await Cropper.open(file, { aspect: 1, outW: 400, round: true });
+      } catch { return alert('この写真は読み込めませんでした。JPEGかPNGでお試しください。'); }
+      if (!blob) return; // キャンセル
+      f._blob = blob;
+      const img = f.querySelector('[data-preview]');
+      img.src = URL.createObjectURL(blob);
+      img.hidden = false;
     });
     container.addEventListener('click', (e) => {
       if (e.target.closest('[data-add]')) { sync(); list.push({}); draw(); }
@@ -123,16 +128,6 @@
       delete p._blob; delete p._preview;
     }
     return people;
-  }
-
-  // 顔写真は正方形に切り抜いて縮小
-  async function resizeSquare(file, size) {
-    const bmp = await createImageBitmap(file);
-    const side = Math.min(bmp.width, bmp.height);
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = Math.min(size, side);
-    canvas.getContext('2d').drawImage(bmp, (bmp.width - side) / 2, (bmp.height - side) / 2, side, side, 0, 0, canvas.width, canvas.height);
-    return new Promise((ok, ng) => canvas.toBlob((b) => (b ? ok(b) : ng()), 'image/jpeg', 0.85));
   }
 
   window.People = { fromShop, searchText, detailHtml, summary, mount, read, collect };

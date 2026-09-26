@@ -131,6 +131,7 @@
       <ul class="info">
         ${s.hours ? `<li><span>🕒</span><span>${esc(s.hours)}</span></li>` : ''}
         ${s.address ? `<li><span>📍</span><span>${esc(s.address)}${dist != null ? `<br><small>現在地から約${dist < 10 ? dist.toFixed(1) : Math.round(dist)}km</small>` : ''}</span></li>` : ''}
+        ${s.access ? `<li><span>🚏</span><span>${esc(s.access).replace(/\n/g, '<br>')}</span></li>` : ''}
       </ul>
       <div class="links">
         ${route ? `<a class="primary" href="${route}" target="_blank" rel="noopener">ここへ行く</a>` : ''}

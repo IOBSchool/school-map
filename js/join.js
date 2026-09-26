@@ -25,6 +25,7 @@
     if (!$('shop').value) missing.push('お店');
     if (!People.read($('peopleEditor')).length) missing.push('お名前');
     if (!$('contact_email').value.trim() || !$('contact_email').checkValidity()) missing.push('ご連絡先メールアドレス');
+    if ($('contact_email').value.trim() && $('contact_email').value.trim() !== $('contact_email2').value.trim()) missing.push('ご連絡先メールアドレス（確認用）が一致しません');
     if (missing.length) return msg('err', '次の項目を確認してください：<br>・' + missing.map(esc).join('<br>・'));
 
     const btn = $('submitBtn');
